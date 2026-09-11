@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#090b10">
+  <meta name="description" content="Enumera hasta 1000 imágenes y videos y descárgalos en un ZIP.">
+  <title>NETO NUMERADOR</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="#" aria-label="Inicio de Neto Numerador">
+      <span class="brand-mark" aria-hidden="true">N</span>
+      <span>
+        <strong>NETO NUMERADOR</strong>
+        <small>Organiza tus anuncios en segundos</small>
+      </span>
+    </a>
+    <div class="privacy-pill"><span></span> Procesamiento 100% local</div>
+  </header>
+
+  <main class="app-shell">
+    <section class="control-card" aria-labelledby="mainTitle">
+      <div class="intro">
+        <div>
+          <span class="eyebrow">RENOMBRADOR MASIVO</span>
+          <h1 id="mainTitle">Enumera imágenes y videos sin hacerlo uno por uno</h1>
+          <p>Tus archivos permanecen en tu dispositivo. Agrega hasta 1000 elementos, escribe un nombre y descarga el resultado. Las imágenes se exportan como PNG conservando su tamaño original.</p>
+        </div>
+        <div class="limit-badge"><strong>1000</strong><span>archivos máximo</span></div>
+      </div>
+
+      <div class="settings-grid">
+        <label class="field">
+          <span>Nombre antes de la numeración</span>
+          <div class="prefix-input">
+            <input id="prefixInput" type="text" value="AD" maxlength="80" placeholder="Ejemplo: AD" autocomplete="off">
+            <span id="nameExample">AD1.jpg</span>
+          </div>
+        </label>
+
+        <label class="field start-field">
+          <span>Comenzar desde</span>
+          <input id="startNumberInput" type="number" value="1" min="0" max="999999" inputmode="numeric">
+        </label>
+      </div>
+
+      <div id="dropZone" class="drop-zone" role="button" tabindex="0" aria-label="Arrastra archivos o presiona para seleccionarlos">
+        <input id="filesInput" class="sr-only" type="file" multiple accept="image/*,video/*,.heic,.heif,.avif,.mkv,.avi,.3gp,.ogv">
+        <input id="folderInput" class="sr-only" type="file" multiple webkitdirectory directory accept="image/*,video/*">
+        <div class="drop-icon" aria-hidden="true">＋</div>
+        <h2>Arrastra aquí tu carpeta, imágenes o videos</h2>
+        <p>También puedes seleccionarlos manualmente</p>
+        <div class="drop-actions">
+          <button id="selectFilesButton" class="button button-secondary" type="button">Seleccionar archivos</button>
+          <button id="selectFolderButton" class="button button-secondary" type="button">Seleccionar carpeta</button>
+        </div>
+        <small>Más de 20 formatos · Imágenes en PNG con tamaño original · Videos sin conversión</small>
+      </div>
+
+      <div class="stats" aria-live="polite">
+        <div><span>Contenido</span><strong id="fileCount">0</strong></div>
+        <div><span>Imágenes</span><strong id="imageCount">0</strong></div>
+        <div><span>Videos</span><strong id="videoCount">0</strong></div>
+        <div><span>Peso total</span><strong id="totalSize">0 B</strong></div>
+      </div>
+
+      <div class="primary-actions">
+        <button id="enumerateButton" class="button button-primary" type="button" disabled>ENUMERAR CONTENIDO</button>
+        <button id="clearButton" class="button button-ghost" type="button" disabled>Borrar todo</button>
+      </div>
+
+      <div id="progressArea" class="progress-area" hidden>
+        <div class="progress-copy">
+          <span id="progressText">Preparando archivos…</span>
+          <strong id="progressPercent">0%</strong>
+        </div>
+        <div class="progress-track"><span id="progressBar"></span></div>
+      </div>
+
+      <div id="notice" class="notice" role="status" aria-live="polite" hidden></div>
+    </section>
+
+    <section class="files-section" aria-labelledby="filesTitle">
+      <div class="section-heading">
+        <div>
+          <span class="eyebrow">VISTA PREVIA</span>
+          <h2 id="filesTitle">Contenido agregado</h2>
+        </div>
+        <span id="visibleCounter" class="visible-counter">0 archivos</span>
+      </div>
+
+      <div id="emptyState" class="empty-state">
+        <span aria-hidden="true">01</span>
+        <h3>Tus archivos aparecerán aquí</h3>
+        <p>Verás la vista previa, el nombre actual, el formato y el nuevo nombre numerado.</p>
+      </div>
+
+      <div id="fileGrid" class="file-grid"></div>
+      <button id="showMoreButton" class="button show-more" type="button" hidden>Mostrar más archivos</button>
+    </section>
+
+    <details class="formats-card">
+      <summary>Ver formatos compatibles</summary>
+      <div class="format-groups">
+        <p><strong>Imágenes:</strong> JPG, JPEG, PNG, WEBP, GIF, SVG, BMP, TIFF, TIF, AVIF, HEIC, HEIF e ICO.</p>
+        <p><strong>Videos:</strong> MP4, MOV, M4V, AVI, MKV, WEBM, MPG, MPEG, 3GP y OGV.</p>
+      </div>
+    </details>
+  </main>
+
+  <template id="fileCardTemplate">
+    <article class="file-card">
+      <div class="preview-box"></div>
+      <div class="file-info">
+        <div class="file-topline">
+          <span class="kind-badge"></span>
+          <button class="remove-button" type="button" aria-label="Quitar archivo" title="Quitar archivo">×</button>
+        </div>
+        <dl>
+          <div><dt>Nombre actual</dt><dd class="current-name"></dd></div>
+          <div><dt>Tipo</dt><dd class="file-type"></dd></div>
+          <div class="new-name-row"><dt>Nuevo nombre</dt><dd class="new-name"></dd></div>
+        </dl>
+      </div>
+    </article>
+  </template>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <script src="app.js"></script>
+</body>
+</html>
